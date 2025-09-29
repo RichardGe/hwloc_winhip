@@ -11,6 +11,7 @@ option(HWLOC_SKIP_TOOLS "don't build/install other hwloc tools")
 option(HWLOC_SKIP_INCLUDES "don't install headers")
 option(HWLOC_WITH_LIBXML2 "use libxml2 instead of minimal XML")
 option(HWLOC_WITH_OPENCL "enable OpenCL support")
+option(HWLOC_WITH_HIP "enable HIP support")
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.17)
     option(HWLOC_WITH_CUDA "enable CUDA support")
 endif()
@@ -88,6 +89,12 @@ if(HWLOC_WITH_OPENCL)
     set(HWLOC_HAVE_OPENCL 1)
 endif()
 
+set(HWLOC_HAVE_HIP)
+if(HWLOC_WITH_HIP)
+    find_package(HIP CONFIG REQUIRED)
+    set(HWLOC_HAVE_HIP 1)
+endif()
+
 set(HAVE_CUDA)
 set(HAVE_CUDA_H)
 set(HAVE_CUDA_RUNTIME_API_H)
@@ -130,12 +137,14 @@ add_library(hwloc
     $<$<BOOL:${HWLOC_HAVE_X86_CPUID}>:${TOPDIR}/hwloc/topology-x86.c>
     $<$<BOOL:${HWLOC_HAVE_LIBXML2}>:${TOPDIR}/hwloc/topology-xml-libxml.c>
     $<$<BOOL:${HWLOC_HAVE_OPENCL}>:${TOPDIR}/hwloc/topology-opencl.c>
+    $<$<BOOL:${HWLOC_HAVE_HIP}>:${TOPDIR}/hwloc/topology-hip.c>
     $<$<BOOL:${HAVE_CUDA}>:${TOPDIR}/hwloc/topology-cuda.c>
 )
 
 target_link_libraries(hwloc PRIVATE
     $<$<BOOL:${HWLOC_HAVE_LIBXML2}>:LibXml2::LibXml2>
     $<$<BOOL:${HWLOC_HAVE_OPENCL}>:OpenCL::OpenCL>
+    $<$<BOOL:${HWLOC_HAVE_HIP}>:hip::host>
     "$<$<BOOL:${HAVE_CUDA}>:CUDA::cudart;CUDA::cuda_driver>"
 )
 
