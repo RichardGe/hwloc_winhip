@@ -108,6 +108,11 @@ hwloc_hip_discover(struct hwloc_backend* backend, struct hwloc_disc_status* dsta
 		if (namebuf[0] != '\0')
 			hwloc_obj_add_info(osdev, "GPUModel", namebuf);
 
+
+		snprintf(namebuf, sizeof(namebuf), "%u", i);
+		hwloc_obj_add_info(osdev, "HIPDeviceIndex", namebuf);
+
+
 		vendor = hwloc_hip_guess_vendor_from_name(namebuf);
 		if (vendor && vendor[0] != '\0')
 			hwloc_obj_add_info(osdev, "GPUVendor", vendor);
@@ -125,7 +130,16 @@ hwloc_hip_discover(struct hwloc_backend* backend, struct hwloc_disc_status* dsta
 		/* Attach under PCI parent if available */
 		parent = NULL;
 		if (hipDeviceGetPCIBusId(busid, (int)sizeof(busid), i) == HIP_SUCCESS) {
-			if (hwloc_hip_parse_pci_busid(busid, &pcidomain, &pcibus, &pcidev, &pcifunc) == 0) {
+			if (hwloc_hip_parse_pci_busid(busid, &pcidomain, &pcibus, &pcidev, &pcifunc) == 0) 
+			{
+				int out_numa = -1;
+				int ret = GetNumaNodeForPciBdf(pcidomain , pcibus, pcidev, pcifunc, &out_numa);
+				if ( ret == 0 )
+				{
+					snprintf(namebuf, sizeof(namebuf), "%u", out_numa);
+					hwloc_obj_add_info(osdev, "NUMAnode", namebuf);
+				}
+
 				parent = hwloc_pci_find_parent_by_busid(topology, pcidomain, pcibus, pcidev, pcifunc);
 			} else {
 				hwloc_debug("HIP: failed to parse PCI bus id '%s'\n", busid);

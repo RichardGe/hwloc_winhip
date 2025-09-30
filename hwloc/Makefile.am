@@ -163,6 +163,7 @@ endif HWLOC_HAVE_HPUX
 
 if HWLOC_HAVE_WINDOWS
 sources += topology-windows.c
+sources += topology-winGpuNuma.cpp
 endif HWLOC_HAVE_WINDOWS
 
 if HWLOC_HAVE_DARWIN

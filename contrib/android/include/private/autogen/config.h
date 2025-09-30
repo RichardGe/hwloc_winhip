@@ -557,6 +557,9 @@
 /* Define to 1 if you have the `OpenCL' library. */
 #define HWLOC_HAVE_OPENCL 1
 
+/* Define to 1 if you have the `Hip' library. */
+#define HWLOC_HAVE_HIP 1
+
 /* Define to 1 if the hwloc library should support dynamically-loaded plugins
    */
 /* #undef HWLOC_HAVE_PLUGINS */
