@@ -88,6 +88,7 @@ hwloc_hip_discover(struct hwloc_backend* backend, struct hwloc_disc_status* dsta
 		unsigned pcidomain = 0, pcibus = 0, pcidev = 0, pcifunc = 0;
 		char infobuf[64];
 		char osname[64];
+		char intstr[64];
 
 		/* Get model name */
 		if (hipDeviceGetName(namebuf, (int)sizeof(namebuf), i) != HIP_SUCCESS)
@@ -108,12 +109,11 @@ hwloc_hip_discover(struct hwloc_backend* backend, struct hwloc_disc_status* dsta
 		if (namebuf[0] != '\0')
 			hwloc_obj_add_info(osdev, "GPUModel", namebuf);
 
-
-		snprintf(namebuf, sizeof(namebuf), "%u", i);
-		hwloc_obj_add_info(osdev, "HIPDeviceIndex", namebuf);
-
+		snprintf(intstr, sizeof(intstr), "%u", i);
+		hwloc_obj_add_info(osdev, "HIPDeviceIndex", intstr);
 
 		vendor = hwloc_hip_guess_vendor_from_name(namebuf);
+		printf("VENDOR %s\n" , vendor);
 		if (vendor && vendor[0] != '\0')
 			hwloc_obj_add_info(osdev, "GPUVendor", vendor);
 
@@ -136,8 +136,8 @@ hwloc_hip_discover(struct hwloc_backend* backend, struct hwloc_disc_status* dsta
 				int ret = GetNumaNodeForPciBdf(pcidomain , pcibus, pcidev, pcifunc, &out_numa);
 				if ( ret == 0 )
 				{
-					snprintf(namebuf, sizeof(namebuf), "%u", out_numa);
-					hwloc_obj_add_info(osdev, "NUMAnode", namebuf);
+					snprintf(intstr, sizeof(intstr), "%u", out_numa);
+					hwloc_obj_add_info(osdev, "NUMAnode", intstr);
 				}
 
 				parent = hwloc_pci_find_parent_by_busid(topology, pcidomain, pcibus, pcidev, pcifunc);
