@@ -113,7 +113,6 @@ hwloc_hip_discover(struct hwloc_backend* backend, struct hwloc_disc_status* dsta
 		hwloc_obj_add_info(osdev, "HIPDeviceIndex", intstr);
 
 		vendor = hwloc_hip_guess_vendor_from_name(namebuf);
-		printf("VENDOR %s\n" , vendor);
 		if (vendor && vendor[0] != '\0')
 			hwloc_obj_add_info(osdev, "GPUVendor", vendor);
 
